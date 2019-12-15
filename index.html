@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PPOM Testing - PRICE V2</title>
+
+
+
+  <!-- Bootstrap core CSS -->
+  <link href="lib/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Start Bootstrap</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <h1 class="mt-5">A Bootstrap 4 Starter Template</h1>
+      <div class="col-sm-8 text-center">
+        <div id="ppom-wrapper">
+          <span id="loading-data"></span>
+          <p>
+            <input class="ppom-input" type="text" data-data_name="yourcompany" /></p>
+            <p>
+              <select class="ppom-input" data-data_name="your_choice">
+                <option value="Good's">Good's</option>
+                <option value="great's">great's</option>
+                <option value="Styl'e">Styl'e</option>
+                <option value="0">0</option>
+              </select>
+            </p>
+            <div class="form-group ppom-c-show ppom-input-package"><label class="form-control-label" for="package">Package<span class="show_required"> *</span><span class="show_description">Select Package</span></label>
+              <div class="form-check-inline"><label class="form-check-label" for="104-package-deed"><input type="checkbox" id="104-package-deed" name="ppom[fields][package][]" class="ppom-check-input ppom-input checkbox" value="Deed" data-optionid="deed" data-price="528" data-label="Deed" data-title="Package" data-onetime="" data-taxable="" data-without_tax="" data-data_name="package" checked="checked"> <span class="ppom-label-checkbox">Deed <span class="ppom-option-label-price">[+$528.00]</span></span></label></div>
+              <div class="form-check-inline"><label class="form-check-label" for="104-package-studend"><input type="checkbox" id="104-package-studend" name="ppom[fields][package][]" class="ppom-check-input ppom-input checkbox" value="Studend" data-optionid="studend" data-price="5.20" data-label="Studend" data-title="Package" data-onetime="" data-taxable="" data-without_tax="" data-data_name="package"> <span class="ppom-label-checkbox">Studend <span class="ppom-option-label-price">[+$5.20]</span></span></label></div>
+              <div class="form-check-inline"><label class="form-check-label" for="104-package-super"><input type="checkbox" id="104-package-super" name="ppom[fields][package][]" class="ppom-check-input ppom-input checkbox" value="Super" data-optionid="super" data-price="" data-label="Super" data-title="Package" data-onetime="" data-taxable="" data-without_tax="" data-data_name="package" checked="checked"> <span class="ppom-label-checkbox">Super</span></label></div>
+              <div class="form-check-inline"><label class="form-check-label" for="104-package-powerful"><input type="checkbox" id="104-package-powerful" name="ppom[fields][package][]" class="ppom-check-input ppom-input checkbox" value="Powerful" data-optionid="powerful" data-price="" data-label="Powerful" data-title="Package" data-onetime="" data-taxable="" data-without_tax="" data-data_name="package"> <span class="ppom-label-checkbox">Powerful</span></label></div>
+            </div>
+            <div class="form-group ppom-c-show ppom-input-gift_boxs ppom-c-hide ppom-unlocked"><label class="form-control-label" for="gift_boxs">Gift Box <span data-ppom-tooltip="ppom_tooltip" class="ppom-tooltip fa fa-question-circle" title="<h3>Gift Wapper</h3>
+              <img src=\&quot;https://theproductionarea.net/wp-content/uploads/2018/08/packages.jpg\&quot;>"></span></label>
+              <div class="form-check"><label class="form-check-label" for="104-gift_boxs-no"><input type="radio" id="104-gift_boxs-no" name="ppom[fields][gift_boxs]" class="ppom-check-input ppom-input radio" value="No" data-price="" data-optionid="no" data-label="No" data-title="Gift Box" data-onetime="" data-taxable="" data-without_tax="" data-data_name="gift_boxs"> <span class="ppom-label-radio">No</span></label></div>
+              <div class="form-check"><label class="form-check-label" for="104-gift_boxs-yes"><input type="radio" id="104-gift_boxs-yes" name="ppom[fields][gift_boxs]" class="ppom-check-input ppom-input radio" value="Yes" data-price="12" data-optionid="yes" data-label="Yes" data-title="Gift Box" data-onetime="" data-taxable="" data-without_tax="" data-data_name="gift_boxs"> <span class="ppom-label-radio">Yes <span class="ppom-option-label-price">[+$12.00]</span></span></label></div>
+            </div>
+
+            <div class="nm-boxes-outer"><label>Bottl 1 +5
+              <div class="pre_upload_image image" data-ppom-tooltip="ppom_tooltip" title="Bottle 1 (+$5.00)"><input type="radio" class="ppom-input" id="images_got_it_-158" data-price="5" data-label="Bottle 1" data-title="Images Got it." data-optionid="images_got_it_-158" data-data_name="images_got_it_" data-type="image" name="ppom[fields][images_got_it_][]" value="{&quot;link&quot;:&quot;https:\/\/ppom.nmdevteam.com\/wp-content\/uploads\/2019\/09\/Facial-Toner.png&quot;,&quot;id&quot;:&quot;158&quot;,&quot;title&quot;:&quot;Bottle 1&quot;,&quot;price&quot;:&quot;5&quot;,&quot;url&quot;:&quot;&quot;}"></div>
+            </label><label> Bottel 2
+              <div class="pre_upload_image image" data-ppom-tooltip="ppom_tooltip" title="Bottle 3 "><input type="radio" class="ppom-input" id="images_got_it_-156" data-price="" data-label="Bottle 3" data-title="Images Got it." data-optionid="images_got_it_-156" data-data_name="images_got_it_" data-type="image" name="ppom[fields][images_got_it_][]" value="{&quot;link&quot;:&quot;https:\/\/ppom.nmdevteam.com\/wp-content\/uploads\/2019\/09\/Facial-Cleanser.png&quot;,&quot;id&quot;:&quot;156&quot;,&quot;title&quot;:&quot;Bottle 3&quot;,&quot;price&quot;:&quot;&quot;,&quot;url&quot;:&quot;&quot;}"></div>
+            </label>
+            <div style="clear:both"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-sm-4 text-center">
+          <h3>Price</h3>
+        </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+   <!-- <script src="lib/node_modules/bootstrap/dist/js/bootstrap.min.js"></script> -->
+   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+   <script src="js/ppom-price-v2.js"></script>
+
+</body>
+
+</html>
