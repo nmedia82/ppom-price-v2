@@ -41,9 +41,9 @@ const getData = {
       }
     });
   },
-
 }
 
+// DOM Manipulation
 const ppom_input = {
   dom: {},
   init: function(dom) {
@@ -56,9 +56,7 @@ const ppom_input = {
     return $(this.dom).attr('data-data_name');
   },
   type: function() {
-    let type = this.dom.type;
-    //type = $(this.dom).attr('data-type') ? $(this.dom).attr('data-type') : type;
-    return type;
+    return this.dom.type;
   },
   value: function() {
     let v = $(this.dom).val();
@@ -67,6 +65,133 @@ const ppom_input = {
     }
     return v;
   },
+}
+
+// Build OptionPrice Object
+const ppom_option_price = {
+
+  field: {},
+
+  init: function(field, value) {
+
+    this.field = field;
+    // console.log(this.field);
+    // Object Destructruing
+    const {
+        ppom_type,
+        title:price_label,
+        price,
+        options,
+        images,
+        onetime,
+        onetime_taxable,
+        data_name,
+      } = this.field;
+
+
+      this.dataname = data_name;
+      this.type     = ppom_type;
+      this.label    = price_label;
+      this.value    = value;
+      this.id       = this.get_id();
+      this.price    = this.get_price();
+      this.apply    = this.get_apply();
+      this.quantity = this.get_quantity();
+
+      /*switch (ppom_type) {
+        case 'email':
+        case 'number':
+        case 'text':
+          if (price) {
+            console.log('text/number/email', priced);
+            
+            this.price = price;
+            
+            
+            }
+        break;
+        case 'select':
+        case 'checkbox':
+        case 'radio':
+          const priced = options.find(o => o.price !== '' && nmh.strip_slashes(o.option) === value);
+          
+          //console.log('select/radio/checkbox', priced);
+          if (priced) {
+            const option_id = data_name+"_"+priced.id;
+            this.id = option_id;
+            this.dataname = data_name;
+            this.type = type;
+            this.price = priced.price;
+            this.apply = onetime == 'on' ? 'fixed' : 'variable';
+            this.label = price_label;
+            this.value = value;
+            this.quantity = 1;            
+                        
+            this.update_price(ppom_price);
+          }
+          break;
+          
+         case 'image':
+            //Destructuring
+            const value_json = JSON.parse(value);
+            const {link,id,title,price:image_price} = value_json;
+            const image_found = images.find(i => i.price && i.id === id);
+            //console.log('image',image_found);
+            if (image_found) {
+              const option_id = data_name+"_"+image_found.id;
+              this.id = option_id;
+              this.dataname = data_name;
+              this.type = type;
+              this.price = image_found.price;
+              this.apply = onetime == 'on' ? 'fixed' : 'variable';
+              this.label = price_label;
+              this.value = value;
+              this.quantity = 1;
+            }
+            return 
+         break;         
+      }*/
+
+      console.log(this);
+      return this;
+  },
+
+  // Getter Methods
+  get_id: function() {
+    const {type,data_name,options,images} = this.field;
+    
+    let id = data_name;
+
+    switch(type){
+      case 'select':
+      case 'radio':
+      case 'checkbox':
+        return data_name;
+      break;
+    }
+  },
+
+  get_price: function() {
+    const {type,price} = this.field;
+    let p = price;
+    
+    switch(type){
+      case 'select':
+      case 'radio':
+      case 'checkbox':
+        p = price;
+      break;
+    }
+
+    return p;
+  },
+  get_apply: function() {
+    const {type,onetime} = this.field;
+    return onetime == 'on' ? 'fixed' : 'variable';
+  },
+  get_quantity: function() {
+    return 1;
+  }
 }
 
 /* getData.load(); */
@@ -117,87 +242,9 @@ const ppomPrice = {
     // filter meta by datname
     const filter = this.meta.filter(m => m.data_name === data_name);
 
-    filter.map(m => {
+    filter.map(field => {
     
-    	this.price = '';
-      // Destructuring
-      const {
-        type,
-        title:price_label,
-        price,
-        options,
-        images,
-        onetime,
-        onetime_taxable
-      } = m;
-      switch (this.ppom_type) {
-      	case 'email':
-        case 'number':
-        case 'text':
-        
-          if (price) {
-          	found = true;
-            //console.log('text/number/email', priced);
-            const option_id = data_name;
-            ppom_price.id = option_id;
-            ppom_price.price = price;
-            ppom_price.dataname = data_name;
-            ppom_price.type = type;
-            ppom_price.apply = onetime == 'on' ? 'fixed' : 'variable';
-            ppom_price.label = price_label;
-            ppom_price.value = value;
-            ppom_price.quantity = 1;  
-            this.update_price(ppom_price);
-            
-            }
-          break;
-        case 'select':
-        case 'checkbox':
-        case 'radio':
-          const priced = options.find(o => o.price !== '' && nmh.strip_slashes(o.option) === value);
-          
-          //console.log('select/radio/checkbox', priced);
-          if (priced) {
-          	found = true;
-            
-            const option_id = data_name+"_"+priced.id;
-            ppom_price.id = option_id;
-            ppom_price.dataname = data_name;
-            ppom_price.type = type;
-            ppom_price.price = priced.price;
-            ppom_price.apply = onetime == 'on' ? 'fixed' : 'variable';
-            ppom_price.label = price_label;
-            ppom_price.value = value;
-            ppom_price.quantity = 1;            
-                        
-            this.update_price(ppom_price);
-          }
-          break;
-          
-         case 'image':
-         		//Destructuring
-            const value_json = JSON.parse(value);
-            const {link,id,title,price:image_price} = value_json;
-            const image_found = images.find(i => i.price && i.id === id);
-            //console.log('image',image_found);
-            if (image_found) {
-              found = true;
-              const option_id = data_name+"_"+image_found.id;
-              ppom_price.id = option_id;
-              ppom_price.dataname = data_name;
-              ppom_price.type = type;
-              ppom_price.price = image_found.price;
-              ppom_price.apply = onetime == 'on' ? 'fixed' : 'variable';
-              ppom_price.label = price_label;
-              ppom_price.value = value;
-              ppom_price.quantity = 1;
-              
-              this.update_price(ppom_price);
-            }
-            return 
-         break;
-         
-      }
+    	const ppom_price = ppom_option_price.init(field);      
 
     });
     return found;
@@ -239,8 +286,10 @@ const ppomPrice = {
 
 }
 
+
+// INITs
 ppomPrice.load_data();
 $(".ppom-input").on('change keyup', function(e){
 	ppomPrice.init(e.currentTarget);
-  console.log('field_prices', ppomPrice.field_prices);
+  // console.log('field_prices', ppomPrice.field_prices);
 });
