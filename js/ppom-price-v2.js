@@ -72,10 +72,8 @@ class PPOM_Price_Class {
 
   constructor(field, value) {
     this.field = field;
-
     //parse for image/audio input
     this.value = this.get_value(value);
-    
 
     // Object Destructruing
     const {
@@ -89,7 +87,7 @@ class PPOM_Price_Class {
       this.label    = price_label;
       this.options  = this.get_options();
       this.id       = this.get_id();
-      this.price    = this.get_price();
+      this.price    = Number(this.get_price());
       this.apply    = this.get_apply();
       this.quantity = this.get_quantity();
       this.has_percent = this.get_has_percent();
@@ -120,7 +118,7 @@ class PPOM_Price_Class {
       } 
     }
 
-    return Number(p);
+    return p;
   }
 
   get_apply() {
@@ -154,12 +152,33 @@ class PPOM_Price_Class {
         field_options.map(fo => fo.title = fo.option || fo.title);
 
     }
-
-    // console.log("Options", field_options);
     return field_options;
   }
   get_has_percent() {
-    return 1;
+
+    return this.get_price().includes("%");
+  }
+}
+
+// Render price table
+const PPOM_Price_Table = {
+
+  tstart: '<table class="table table-striped"><tbody>',
+  tend: '<table><tbody>',
+
+  init: function(ppom_prices) {
+
+    let table = this.tstart;
+    $.each(ppom_prices, function(i, price){
+      table += '<tr>';
+      table += `<td>${price.label} [${price.value}]</td>`;
+      table += `<td>${price.price}</td>`;
+      table += '</tr>';
+    });
+    table += this.tend;
+
+    // console.log("TableHTML", table);
+    $("#ppom-price-container").html(table);
   }
 }
 
@@ -193,14 +212,9 @@ const ppomPrice = {
     if( has_value && field_meta ) {
       console.log('FieldMeta', field_meta);
       this.update_price(field_meta, input.value());
+      PPOM_Price_Table.init(this.field_prices)
     }
 
-
-    // if (has_value && (this.has_price(input.dataname(), input.value())) ) {
-    //   nmh.working('Found price '+this.ppom_price);
-    // } else {
-    //   //this.update_price(null, input.dataname());
-    // }
     
     });
     
@@ -210,25 +224,6 @@ const ppomPrice = {
   	getData.load();
     this.meta = getData.data;
     nmh.l(this.meta);
-  },
-
-  has_price: function(data_name, value) {
-    let found = false;
-    let ppom_price = {};
-    // filter meta by datname
-    const filter = this.meta.filter(m => m.data_name === data_name);
-
-    $.each(filter, (index, field) => {
-    // filter.map(field => {
-    // console.log('Field filter', field);
-    
-    	// const ppom_price = ppom_option_price.init(field, value);
-      
-      // console.log(ppom_price);
-      this.update_price(field, value);
-
-    });
-    return found;
   },
   
   // Get ppom input type from meta by datame
@@ -248,12 +243,13 @@ const ppomPrice = {
     	field_prices = [...field_prices, ppom_price];
     //console.log(ppom_price);
     this.field_prices = field_prices;
-    console.log("Field Price", this.field_prices);
+    // console.log("Field Price", this.field_prices);
   },
+
  	render_table: function(){
   	
     if( this.field_prices.length === 0 ) return;
-    
+      
   }
 
 }
@@ -263,5 +259,5 @@ const ppomPrice = {
 ppomPrice.load_data();
 $(".ppom-input").on('change keyup', function(e){
 	ppomPrice.init(e.currentTarget);
-  // console.log('field_prices', ppomPrice.field_prices);
+  console.log('field_prices', ppomPrice.field_prices);
 });
