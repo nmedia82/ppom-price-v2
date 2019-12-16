@@ -67,97 +67,36 @@ const ppom_input = {
   },
 }
 
-// Build OptionPrice Object
-const ppom_option_price = {
+// Build OptionPrice Class
+class PPOM_Price_Class {
 
-  field: {},
-
-  init: function(field, value) {
-
+  constructor(field, value) {
     this.field = field;
-    // console.log(this.field);
+
+    //parse for image/audio input
+    this.value = this.value && JSON.parse(this.value); //this.get_value(value);
+
     // Object Destructruing
     const {
-        ppom_type,
+        type:ppom_type,
         title:price_label,
-        price,
-        options,
-        images,
-        onetime,
-        onetime_taxable,
         data_name,
       } = this.field;
-
 
       this.dataname = data_name;
       this.type     = ppom_type;
       this.label    = price_label;
       this.value    = value;
+      this.options  = this.get_options();
       this.id       = this.get_id();
       this.price    = this.get_price();
       this.apply    = this.get_apply();
       this.quantity = this.get_quantity();
-
-      /*switch (ppom_type) {
-        case 'email':
-        case 'number':
-        case 'text':
-          if (price) {
-            console.log('text/number/email', priced);
-            
-            this.price = price;
-            
-            
-            }
-        break;
-        case 'select':
-        case 'checkbox':
-        case 'radio':
-          const priced = options.find(o => o.price !== '' && nmh.strip_slashes(o.option) === value);
-          
-          //console.log('select/radio/checkbox', priced);
-          if (priced) {
-            const option_id = data_name+"_"+priced.id;
-            this.id = option_id;
-            this.dataname = data_name;
-            this.type = type;
-            this.price = priced.price;
-            this.apply = onetime == 'on' ? 'fixed' : 'variable';
-            this.label = price_label;
-            this.value = value;
-            this.quantity = 1;            
-                        
-            this.update_price(ppom_price);
-          }
-          break;
-          
-         case 'image':
-            //Destructuring
-            const value_json = JSON.parse(value);
-            const {link,id,title,price:image_price} = value_json;
-            const image_found = images.find(i => i.price && i.id === id);
-            //console.log('image',image_found);
-            if (image_found) {
-              const option_id = data_name+"_"+image_found.id;
-              this.id = option_id;
-              this.dataname = data_name;
-              this.type = type;
-              this.price = image_found.price;
-              this.apply = onetime == 'on' ? 'fixed' : 'variable';
-              this.label = price_label;
-              this.value = value;
-              this.quantity = 1;
-            }
-            return 
-         break;         
-      }*/
-
-      console.log(this);
-      return this;
-  },
+      this.has_percent = this.get_has_percent();
+  }
 
   // Getter Methods
-  get_id: function() {
+  get_id() {
     const {type,data_name,options,images} = this.field;
     
     let id = data_name;
@@ -166,33 +105,84 @@ const ppom_option_price = {
       case 'select':
       case 'radio':
       case 'checkbox':
-        return data_name;
+      const priced = options.find(o => o.price !== '' && nmh.strip_slashes(o.option) === this.value);
+      if( priced ) {
+        id = priced.id;   
+      }
+    
       break;
     }
-  },
+    return id;
+  }
 
-  get_price: function() {
-    const {type,price} = this.field;
-    let p = price;
+  get_price() {
+    let p = this.field.price || '';
+
+    // if options found
     
-    switch(type){
-      case 'select':
-      case 'radio':
-      case 'checkbox':
-        p = price;
-      break;
+    if( this.options ){
+      // const option_title = o.option || o.title;
+      const priced = this.options.find(o => o.price !== '' && nmh.strip_slashes(o.title) === this.value);
+      if( priced ) {
+        p = priced.price;
+      } 
     }
 
     return p;
-  },
-  get_apply: function() {
+  }
+
+  get_apply() {
     const {type,onetime} = this.field;
     return onetime == 'on' ? 'fixed' : 'variable';
-  },
-  get_quantity: function() {
+  }
+
+  get_quantity() {
+    return 1;
+  }
+
+  get_value(value) {
+
+    const {type} = this.field;
+    switch(type){
+      case 'image':
+      case 'audio':
+        value = JSON.parse(value);
+      break;
+    }
+
+    console.log('JSON Value', value);
+    return value;
+  }
+
+  get_options() {
+    const {type,options,images,audio} = this.field;
+    let field_options = options || images || audio;
+    if( field_options ) {
+        field_options.map(fo => fo.title = fo.option || fo.title);
+
+    }
+    // switch(type){
+    //   case 'select':
+    //   case 'radio':
+    //   case 'checkbox':
+    //   case 'palettes':
+    //     // field_options = [...options];
+    //   case 'image':
+    //   case 'audio':
+    //     // field_options = [...options];
+    //     field_options.map(fo => fo.title = fo.title);
+    //     // field_options = [...audio];
+    //     // field_options.map(fo => fo.title = fo.option);
+
+    // }
+    console.log("Options", field_options);
+    return field_options;
+  }
+  get_has_percent() {
     return 1;
   }
 }
+
 
 /* getData.load(); */
 const ppomPrice = {
@@ -210,8 +200,8 @@ const ppomPrice = {
         
     // binding events
     input = ppom_input.init(elem);
-    //console.log(input);
-    this.get_ppom_type(input.dataname());
+    // console.log('DOM Input', input);
+    this.set_ppom_type(input.dataname());
     //this.input = $(e.currentTarget);
     /*nmh.l('Dom Type', input.type());
     nmh.l('PPOM Type', this.ppom_type);
@@ -242,22 +232,28 @@ const ppomPrice = {
     // filter meta by datname
     const filter = this.meta.filter(m => m.data_name === data_name);
 
-    filter.map(field => {
+    $.each(filter, (index, field) => {
+    // filter.map(field => {
+    // console.log('Field filter', field);
     
-    	const ppom_price = ppom_option_price.init(field);      
+    	// const ppom_price = ppom_option_price.init(field, value);
+      
+      // console.log(ppom_price);
+      this.update_price(field, value);
 
     });
     return found;
   },
   
   // Get ppom input type from meta by datame
-  get_ppom_type: function(dataname){
+  set_ppom_type: function(dataname){
   	const filter = this.meta.find(m => m.data_name === dataname);
     this.ppom_type = filter.type || 'unknown';
   },
   
-  update_price: function(ppom_price){
+  update_price: function(field, value){
   	
+    const ppom_price = new PPOM_Price_Class(field, value);
     console.log('Prices Found ', ppom_price);
     // some price validatation and flags
     ppom_price.has_percent = false;
