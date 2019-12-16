@@ -74,7 +74,8 @@ class PPOM_Price_Class {
     this.field = field;
 
     //parse for image/audio input
-    this.value = this.value && JSON.parse(this.value); //this.get_value(value);
+    this.value = this.get_value(value);
+    
 
     // Object Destructruing
     const {
@@ -86,13 +87,13 @@ class PPOM_Price_Class {
       this.dataname = data_name;
       this.type     = ppom_type;
       this.label    = price_label;
-      this.value    = value;
       this.options  = this.get_options();
       this.id       = this.get_id();
       this.price    = this.get_price();
       this.apply    = this.get_apply();
       this.quantity = this.get_quantity();
       this.has_percent = this.get_has_percent();
+      this.is_positive = this.price > 0 ? true : false;
   }
 
   // Getter Methods
@@ -101,25 +102,16 @@ class PPOM_Price_Class {
     
     let id = data_name;
 
-    switch(type){
-      case 'select':
-      case 'radio':
-      case 'checkbox':
-      const priced = options.find(o => o.price !== '' && nmh.strip_slashes(o.option) === this.value);
+      const priced = this.options.find(o => o.price !== 0 && nmh.strip_slashes(o.title) === this.value);
       if( priced ) {
-        id = priced.id;   
+        id = data_name+'_'+priced.id;   
       }
-    
-      break;
-    }
     return id;
   }
 
   get_price() {
     let p = this.field.price || '';
-
-    // if options found
-    
+    // if options found    
     if( this.options ){
       // const option_title = o.option || o.title;
       const priced = this.options.find(o => o.price !== '' && nmh.strip_slashes(o.title) === this.value);
@@ -128,7 +120,7 @@ class PPOM_Price_Class {
       } 
     }
 
-    return p;
+    return Number(p);
   }
 
   get_apply() {
@@ -147,35 +139,23 @@ class PPOM_Price_Class {
       case 'image':
       case 'audio':
         value = JSON.parse(value);
+        value = value.title;
       break;
     }
 
-    console.log('JSON Value', value);
+    // console.log('JSON Value', value);
     return value;
   }
 
   get_options() {
     const {type,options,images,audio} = this.field;
-    let field_options = options || images || audio;
+    let field_options = options || images || audio || [];
     if( field_options ) {
         field_options.map(fo => fo.title = fo.option || fo.title);
 
     }
-    // switch(type){
-    //   case 'select':
-    //   case 'radio':
-    //   case 'checkbox':
-    //   case 'palettes':
-    //     // field_options = [...options];
-    //   case 'image':
-    //   case 'audio':
-    //     // field_options = [...options];
-    //     field_options.map(fo => fo.title = fo.title);
-    //     // field_options = [...audio];
-    //     // field_options.map(fo => fo.title = fo.option);
 
-    // }
-    console.log("Options", field_options);
+    // console.log("Options", field_options);
     return field_options;
   }
   get_has_percent() {
@@ -207,14 +187,20 @@ const ppomPrice = {
     nmh.l('PPOM Type', this.ppom_type);
     nmh.l('Value', input.value());
     nmh.l('Dataname', input.dataname());*/
-    
-    const has_value = input.value() || false;
 
-    if (has_value && (this.has_price(input.dataname(), input.value())) ) {
-      nmh.working('Found price '+this.ppom_price);
-    } else {
-      //this.update_price(null, input.dataname());
+    const has_value = input.value() || false;
+    const field_meta = this.meta.find(m => m.data_name === input.dataname());
+    if( has_value && field_meta ) {
+      console.log('FieldMeta', field_meta);
+      this.update_price(field_meta, input.value());
     }
+
+
+    // if (has_value && (this.has_price(input.dataname(), input.value())) ) {
+    //   nmh.working('Found price '+this.ppom_price);
+    // } else {
+    //   //this.update_price(null, input.dataname());
+    // }
     
     });
     
@@ -254,25 +240,15 @@ const ppomPrice = {
   update_price: function(field, value){
   	
     const ppom_price = new PPOM_Price_Class(field, value);
-    console.log('Prices Found ', ppom_price);
-    // some price validatation and flags
-    ppom_price.has_percent = false;
-    if( ppom_price.price.includes('%') ) {
-    	ppom_price.price = ppom_price.price;
-      ppom_price.has_percent = true;
-    } else {
-    	ppom_price.price = Number(ppom_price.price);
-    }
-    
-    
-    let field_prices = this.field_prices.filter(f => f.id !== ppom_price.id);
-    
+    // console.log('Prices Found ', ppom_price);
+    // filter only those option which have prices
+    let field_prices = this.field_prices.filter(f => f.id !== ppom_price.id);    
     // If price found
-    if( ppom_price )
+    if( ppom_price && ppom_price.price != 0)
     	field_prices = [...field_prices, ppom_price];
     //console.log(ppom_price);
     this.field_prices = field_prices;
-    //console.log(this.field_prices);
+    console.log("Field Price", this.field_prices);
   },
  	render_table: function(){
   	
